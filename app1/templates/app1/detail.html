@@ -1,0 +1,112 @@
+{% extends 'app1/base.html' %}
+{% load i18n %}
+{% block extra-head %}
+<meta name="keywords" content="{{obj}},{{obj.strtags}},{{ g_blog.title }},{{ g_blog.keywords }}" />
+<meta name="description" content="{{obj}},{{obj.category.name}},{{obj.strtags}},{{obj.abstract}}" />
+{% endblock %} 
+
+{% block content_main %}
+	<div class="item">
+
+			<div class="date">
+				<div>&nbsp;</div>
+				<span>&nbsp;</span>
+			</div>
+
+			<div class="content">
+				<h1><a href="{{obj.category.get_absolute_url}}" title="{{obj.category.name|safe}}">{{obj.category.name|safe}}</a> &raquo; <span title="{{obj.title|safe}}">{{obj.title|safe}}</span></h1>
+				<div class="body">
+				<div class="content_text">
+				<p>
+				{{obj.content|safe}}
+				</p>
+				</div>
+				<div>
+				<table>
+				<tr>
+					<td>
+					{% trans "Permalink" %} http://{{current_site.domain}}{{obj.short_url}}
+					</td>
+				</tr>
+				<tr>
+					<td>
+					{% trans "Categories" %} <a href="{{obj.category.get_absolute_url}}" title="{{obj.category.name|safe}}">{{obj.category.name|safe}}</a> 
+					{%if obj.tags%}{% trans "Tags" %}: {%for tag in obj.tags%}<a href="{% url app1.views.tag_article tag %}" title="{{tag}}">{{tag}}</a>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						{% if not forloop.last %}, {% endif %}{%endfor%}{%endif%} {% trans "Author" %}: <a href="{{obj.profile.get_absolute_url}}" title="{{obj.profile.displayname|safe}} {% trans 'Profile' %}" rel="nofollow">{{obj.profile.displayname|safe}}</a>
+						{% trans "Date" %} {{obj.pub_time|date:"d/m/Y"}}
+					</td>
+				</tr>
+				<tr>
+				<td>
+				{% if user.is_authenticated %}
+				{% if user.is_superuser %}
+				{% trans "Administration" %}: <a href='{% url app1.views.edit_article key=obj.key %}'>{% trans "Edit" %}</a>
+				| <a href='{% url app1.views.del_article key=obj.key %}'>{% trans "Delete" %}</a>
+				{%else%}
+				{% ifequal user obj.author %}
+					<a href='{% url app1.views.edit_article key=obj.key %}'>{% trans "Edit" %}</a>
+				{% endifequal %}
+				{% endif %}
+				{% endif %}
+				</td>
+				</tr>
+				<tr>
+				<td>
+				{%if not obj.commentclosed%}
+					
+					{% trans "Like what you read?" %} 
+					{% if user.is_authenticated %}
+					<script language="javascript" type="text/javascript">  
+					//
+					function show_post_comment(){
+						document.getElementById("postcomment2").style.display = "block";
+					}
+					//
+					function replyto(somebd,commentkey){
+						show_post_comment();
+						document.getElementById("id_toID").value = commentkey;
+						document.getElementById("id_message").value = "To "+somebd+":\n";
+					}
+					</script> 
+					<a href="#postcomment" onclick='show_post_comment();'>{% trans "Leave a comment" %}</a>
+					{%else%}
+					<a href="{{continue_url}}">{% trans "Secure login with google account" %}</a> {% trans "Leave a comment" %}
+					{%endif%}
+					</td>
+					</tr>
+					<tr>
+						<td>
+							<ul> 
+								{% if obj.next %}<li>{% trans "Newer Post" %}: <a href="{{obj.next.get_absolute_url}}" title="{{obj.next.title}}">{{obj.next.title}}</a></li>{% endif %}
+								{% if obj.prev %}<li>{% trans "Older Post" %}: <a href="{{obj.prev.get_absolute_url}}" title="{{obj.prev.title}}">{{obj.prev.title}}</a></li>{% endif %}
+							</ul>
+						</td>
+					</tr>
+					</table>
+					</div>
+					<hr/>
+
+					<div id="postcomment2" {%if not form.name.data%}style="display:None;"{%endif%}>
+
+					<form action="" method="POST">
+					<INPUT type="hidden" id="id_toID" name="toID" value="">
+					<p>{%if form.name.errors%}{{form.name.errors}}<br/>{%endif%}<label for="id_name">{{form.name.label}}: </label> {{form.name}} {% trans "*required" %}<br/>
+					{%if form.web.errors%}{{form.web.errors}}<br/>{%endif%}<label for="id_web">{{form.web.label}}: </label> {{form.web}} {{form.web.help_text}}<br/>
+					{%if form.message.errors%}{{form.message.errors}}<br/>{%endif%}<label for="id_message">{{form.message.label}}: {% trans "*required" %} ({{form.message.help_text}})</label> <br/>{{form.message}} </p>
+
+					<p><input type="submit" style="width: 90px" value="{% trans 'Submit' %}" /></p>
+					</form>
+				{%endif%}
+				
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+{% endblock %}
+

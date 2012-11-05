@@ -1,0 +1,154 @@
+{% load i18n %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; UTF-8"/>
+<meta name="keywords" content="{{ g_blog.title }},{{ g_blog.keywords }}" />
+<meta name="description" content="{{ g_blog.description }}" />
+<link rel="stylesheet" type="text/css" href="/media/css/default.css" media="screen"/>
+<title>{{ g_blog.title }}</title>
+</head>
+
+<body>
+
+<div class="container">
+
+	{% block top %}
+	<div class="top">
+		<a href="http://for.china2.us"><span>{{ g_blog.title }}</span></a>
+	</div>
+	{% endblock %}
+	
+{% block header %}
+<div class="header" align="right">
+	<br></br>
+	{% if user.is_authenticated %}
+		{% trans "user" %}:
+		<strong>{{ user }}</strong> | 
+		<a href="{% url app1.views.profile %}">{% trans "Profile" %}</a> 
+		| 
+			{% if user.is_superuser %}
+			<a href="{% url app1.views.emptymem %}">{% trans "Flush Cache" %}</a> | 
+			{%endif%}
+		<a href="{% url django.contrib.auth.views.logout %}">{% trans "Logged out" %}</a> 
+	{% else %}
+		<a href="{% url django.contrib.auth.views.login %}">{% trans "Secure login with google account" %}</a>
+	{% endif %}
+</div>
+{% endblock %}
+	
+	{% block content_main %}
+	<div class="main">
+
+		<div class="item">
+
+			<div class="date">
+				<div>OCT</div>
+				<span>01</span>
+			</div>
+
+			<div class="content">
+
+				<h1>{% trans "Recent posts" %}</h1>
+
+				<div class="body">
+
+					<ul class="even">{%for each in newposts%}<li><a href="{{each.get_absolute_url}}" title="{{each.title}}">{{each.title}}</a></li>{%endfor%}
+
+				</div>
+
+			</div>
+
+		</div>
+		
+		{%for cate in all_categories|slice:":8"%}
+		
+		<div class="item">
+
+			<div class="date">
+				<div>SEP</div>
+				<span>30</span>
+			</div>
+
+			<div class="content">
+
+				<h1>{{cate.name|safe}}</h1>
+
+				<div class="body">
+
+					<ul class="odd">{%for each in cate.posts%}<li><a href="{{each.get_absolute_url}}" title="{{each.title}}">{{each.title}}</a></li>{%endfor%}
+				
+				</div>
+
+			</div>
+
+		</div>
+		
+		{%endfor%}
+
+	</div>
+   {% endblock %} 
+	<div class="navigation">
+	
+	{% if user.is_authenticated %}
+	<h1>{% trans "Administration" %}</h1>
+	<ul>
+	<li><a href="{% url app1.views.add_article %}">{% trans "Add Article" %}</a></li>
+	<li><a href="{% url app1.views.myarticles %}">{% trans "My articles" %}</a></li>
+		{% if user.is_superuser %}
+		<li><a href="{% url app1.views.lastcomments %}">{% trans "Recent comments" %}</a></li>
+		<li><a href="/admin/app1/">{% trans "Django administration" %}</a></li>
+		{%endif%}
+	</ul>
+	{%endif%}
+	
+	<h1>{% trans "Category List" %}</h1>
+		<ul>
+		{%for each in all_categories%}
+			<li><a href="{{each.get_absolute_url}}" title="{{each.name|safe}}">{{each.name|safe}}</a></li>
+		{%endfor%}	
+	</ul>
+	
+	{%if newcomment_list%}
+		<h1>{% trans "Recent Comment" %}</h1>
+			<ul>
+			{%for each in newcomment_list%}
+				<li>{{each.name}}@<a href="{{each.entry.get_absolute_url}}#{{each.key.id}}" title='{{each.message|slice:":100"}}' target="_blank">{{each.entry.title|safe}}</a>
+				</li>
+			{%endfor%}
+			</ul>
+		</div>
+	{%endif%}
+   
+   
+   {%if newcomment_list%}
+		<h1>{% trans "Recent Comment" %}</h1>
+		<ul>
+		{%for each in newcomment_list%}
+		<li class="comment">{{each.name}}@<a href="{{each.entry.get_absolute_url}}#{{each.key.id}}" title='{{each.message|slice:":100"}}' target="_blank">{{each.entry.title|safe}}</a></li>
+		{%endfor%}
+		</ul>
+    {%endif%}
+	
+	{%if links_list%}
+		<h1>{% trans "Links" %}</h1>
+		<ul>
+		{%for each in links_list%}
+		<li class="link"><a href="{{each.url}}" title="{{each.name}}" target="_blank" rel="nofollow">{{each.name}}</a></li>
+		{%endfor%}
+		</ul>
+    {%endif%}
+	</div>
+	
+	<div class="clearer"><span></span></div>
+
+	<div class="footer">&copy; 2012 <a href="http://for.china2.us">http://for.china2.us</a>. Valid <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a> &amp; <a href="http://validator.w3.org/check?uri=referer">XHTML</a>. Template design by <a href="http://templates.arcsin.se">Arcsin</a>
+	</div>
+
+</div>
+
+</body>
+
+</html>
