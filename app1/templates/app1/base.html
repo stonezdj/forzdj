@@ -112,26 +112,15 @@
 	</ul>
 	
 	{%if newcomment_list%}
-		<h1>{% trans "Recent Comment" %}</h1>
+		<h1>{% trans "Recent comments" %}</h1>
 			<ul>
 			{%for each in newcomment_list%}
 				<li>{{each.name}}@<a href="{{each.entry.get_absolute_url}}#{{each.key.id}}" title='{{each.message|slice:":100"}}' target="_blank">{{each.entry.title|safe}}</a>
 				</li>
 			{%endfor%}
 			</ul>
-		</div>
 	{%endif%}
    
-   
-   {%if newcomment_list%}
-		<h1>{% trans "Recent Comment" %}</h1>
-		<ul>
-		{%for each in newcomment_list%}
-		<li class="comment">{{each.name}}@<a href="{{each.entry.get_absolute_url}}#{{each.key.id}}" title='{{each.message|slice:":100"}}' target="_blank">{{each.entry.title|safe}}</a></li>
-		{%endfor%}
-		</ul>
-    {%endif%}
-	
 	{%if links_list%}
 		<h1>{% trans "Links" %}</h1>
 		<ul>

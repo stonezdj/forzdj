@@ -87,6 +87,26 @@
 						</td>
 					</tr>
 					</table>
+					{%if commentlist%}
+					<a name="comments"></a>
+					<div class="yui-g" id="articletop">
+					<h2>{% trans "Comments" %}</h2>
+					<ul class="comments">
+					{%for each in commentlist%}
+					<li><a name="{{ each.key.id }}"></a> 
+					<h4 class="messageh3" title="{{each.name}}"></h4>
+					<p class="message">
+					{%if each.web%}<a href="{{each.web}}" title="{{each.web}}" target="_blank" rel="nofollow">{{each.name}}</a>
+					{%else%}
+					{{each.name}}
+					{%endif%}
+					@{{each.date|date:"Y-m-d H:i:s"}} {%if not obj.commentclosed%}<a href="#postcomment" onclick='replyto("{{each.name}}","{{each.key}}");' title="{% trans 'Reply' %} {{each.name}}">{% trans "Reply" %}</a>{%endif%} {% if user.is_superuser %} | <a href='{% url app1.views.del_comment key=each.key %}'>{% trans "Delete" %}</a>{%endif%}<br/>
+					{{each.message|safe}}</p>
+					</li>{%endfor%}
+					</ul>
+					{%if pagination_div%}{{ pagination_div|safe }}{%endif%}
+					</div>
+					{%endif%}
 					</div>
 					<hr/>
 
@@ -101,6 +121,8 @@
 					<p><input type="submit" style="width: 90px" value="{% trans 'Submit' %}" /></p>
 					</form>
 				{%endif%}
+				
+				
 				
 				</div>
 
